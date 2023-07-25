@@ -1,0 +1,79 @@
+from random import randrange
+
+def print_board(board):
+    for row in board:
+        print("+-------+-------+-------+")
+        print("|       |       |       |")
+        print(f"|   {row[0]}   |   {row[1]}   |   {row[2]}   |")
+        print("|       |       |       |")
+    print("+-------+-------+-------+")
+
+def check_winner(board, player):
+    # Check rows and columns
+    for i in range(3):
+        if all(board[i][j] == player for j in range(3)) or all(board[j][i] == player for j in range(3)):
+            return True
+    
+    # Check diagonals
+    if all(board[i][i] == player for i in range(3)) or all(board[i][2-i] == player for i in range(3)):
+        return True
+    
+    return False
+
+def make_move(board, move, player):
+    for row in board:
+        for i in range(3):
+            if row[i] == move:
+                row[i] = player
+                return
+
+def is_board_full(board):
+    for row in board:
+        for cell in row:
+            if isinstance(cell, int):
+                return False
+    return True
+
+def get_free_squares(board):
+    return [cell for row in board for cell in row if isinstance(cell, int)]
+
+def computer_move(board):
+    free_squares = get_free_squares(board)
+    return free_squares[randrange(len(free_squares))]
+
+def play_game():
+    board = [[1, 2, 3], [4, 'X', 6], [7, 8, 9]]
+    player = 'O'
+
+    print("Welcome to Tic-Tac-Toe!")
+    print_board(board)
+
+    while True:
+        if player == 'O':
+            while True:
+                try:
+                    move = int(input("Enter your move: "))
+                    if move in get_free_squares(board):
+                        break
+                    else:
+                        print("Invalid move. Please choose a free square.")
+                except ValueError:
+                    print("Invalid input. Please enter a valid number.")
+        else:
+            move = computer_move(board)
+            print(f"Computer's move: {move}")
+
+        make_move(board, move, player)
+        print_board(board)
+
+        if check_winner(board, player):
+            print(f"{player} won!")
+            break
+        elif is_board_full(board):
+            print("It's a tie!")
+            break
+
+        player = 'X' if player == 'O' else 'O'
+
+if __name__ == "__main__":
+    play_game()
